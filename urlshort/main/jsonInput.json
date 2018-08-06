@@ -1,0 +1,13 @@
+{
+  "RedirectInfo": [
+    {
+      "Path": "/five",
+      "Url": "https://www.google.com.ua"
+    },
+
+    {
+      "Path": "/six",
+      "Url": "https://gophercises.com/exercises"
+    }
+  ]
+}

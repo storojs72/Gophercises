@@ -2,9 +2,8 @@ package urlshort
 
 import (
 	"net/http"
-	"strings"
-	"fmt"
 	"gopkg.in/yaml.v2"
+	"encoding/json"
 )
 
 // MapHandler will return an http.HandlerFunc (which also
@@ -14,15 +13,13 @@ import (
 // If the path is not provided in the map, then the fallback
 // http.Handler will be called instead.
 func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
-	result := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(r.URL.Path)
-		if strings.EqualFold(r.URL.Path, "/") {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if pathsToUrls[r.URL.Path] == ""{
 			fallback.ServeHTTP(w, r)
-			return
+		} else {
+			http.Redirect(w, r, pathsToUrls[r.URL.Path], http.StatusTemporaryRedirect)
 		}
-		http.Redirect(w, r, pathsToUrls[r.URL.Path], http.StatusMovedPermanently)
 	}
-	return result
 }
 
 // YAMLHandler will parse the provided YAML and then return
@@ -42,28 +39,39 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 // See MapHandler to create a similar http.HandlerFunc via
 // a mapping of paths to urls.
 func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-	parsedYaml, err := parseYAML(yml)
-	if err != nil {
-		return nil, err
+	var configuration []struct {
+		Path string
+		Url string
 	}
-	return MapHandler(parsedYaml, fallback), nil
-}
-
-func parseYAML(yml []byte) (map[string]string, error) {
-	result := make(map[string]string, 0)
-	var configuration Config
 	err := yaml.Unmarshal(yml, &configuration)
 	if err != nil {
 		return nil, err
 	}
+
+	pathsMap := make(map[string]string, 0)
 	for _, element := range configuration {
-		result[element.Path] = element.Url
+		pathsMap[element.Path] = element.Url
 	}
-	return result, nil
+
+	return MapHandler(pathsMap, fallback), nil
 }
 
-type Config []struct {
-	Path string
-	Url string
-}
+func JSONHandler(jsn []byte, fallback http.Handler) (http.HandlerFunc, error) {
+	var configuration struct {
+		RedirectInfo []struct{
+			Path string
+			Url string
+		}
+	}
+	err := json.Unmarshal(jsn, &configuration)
+	if err != nil {
+		return nil, err
+	}
 
+	pathsMap := make(map[string]string, 0)
+	for _, element := range configuration.RedirectInfo {
+		pathsMap[element.Path] = element.Url
+	}
+
+	return MapHandler(pathsMap, fallback), nil
+}
