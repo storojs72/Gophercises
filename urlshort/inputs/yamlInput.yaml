@@ -1,0 +1,4 @@
+- path: /three
+  url: https://github.com/gophercises/urlshort
+- path: /four
+  url: https://github.com/gophercises/urlshort/tree/solution
