@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"github.com/gophercises/urlshort"
+	"github.com/gophercises/2_urlshort"
 	"flag"
 	"io/ioutil"
 )
@@ -16,7 +16,7 @@ func main() {
 
 	mux := defaultMux()
 	if useBoltDb {
-		boltDbHandler, err := urlshort.BoltDBHandler("urlshort/inputs/bolt.db", mux)
+		boltDbHandler, err := __urlshort.BoltDBHandler("2_urlshort/inputs/bolt.db", mux)
 		if err != nil {
 			panic(err)
 		}
@@ -26,28 +26,28 @@ func main() {
 	} else {
 		//Build the MapHandler using the mux as the fallback
 		pathsToUrls := map[string]string{
-			"/one": "https://godoc.org/github.com/gophercises/urlshort",
+			"/one": "https://godoc.org/github.com/gophercises/2_urlshort",
 			"/two": "https://godoc.org/gopkg.in/yaml.v2",
 		}
-		mapHandler := urlshort.MapHandler(pathsToUrls, mux)
+		mapHandler := __urlshort.MapHandler(pathsToUrls, mux)
 
 		// Build the YAMLHandler using the mapHandler as the
 		// fallback
-		yamlBytes, err := ioutil.ReadFile("urlshort/inputs/yamlInput.yaml")
+		yamlBytes, err := ioutil.ReadFile("2_urlshort/inputs/yamlInput.yaml")
 		if err != nil {
 			panic(err)
 		}
 
-		yamlHandler, err := urlshort.YAMLHandler(yamlBytes, mapHandler)
+		yamlHandler, err := __urlshort.YAMLHandler(yamlBytes, mapHandler)
 		if err != nil {
 			panic(err)
 		}
 
-		jsonBytes, err := ioutil.ReadFile("urlshort/inputs/jsonInput.json")
+		jsonBytes, err := ioutil.ReadFile("2_urlshort/inputs/jsonInput.json")
 		if err != nil {
 			panic(err)
 		}
-		jsonHandler, err := urlshort.JSONHandler(jsonBytes, yamlHandler)
+		jsonHandler, err := __urlshort.JSONHandler(jsonBytes, yamlHandler)
 		if err != nil {
 			panic(err)
 		}

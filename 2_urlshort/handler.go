@@ -1,4 +1,4 @@
-package urlshort
+package __urlshort
 
 import (
 	"net/http"

@@ -18,12 +18,12 @@ func TestWriteToDb(t *testing.T){
 		"/seven",
 	}
 	urls := []string {
-		"https://godoc.org/github.com/gophercises/urlshort",
+		"https://godoc.org/github.com/gophercises/2_urlshort",
 		"https://godoc.org/gopkg.in/yaml.v2",
 		"https://www.google.com.ua",
 		"https://gophercises.com/exercises",
-		"https://github.com/gophercises/urlshort",
-		"https://github.com/gophercises/urlshort/tree/solution",
+		"https://github.com/gophercises/2_urlshort",
+		"https://github.com/gophercises/2_urlshort/tree/solution",
 		"https://github.com/boltdb/bolt",
 	}
 	if len(paths) != len(urls){
